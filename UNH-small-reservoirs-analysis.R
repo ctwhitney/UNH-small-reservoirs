@@ -53,7 +53,7 @@ lm_eqn2 = function(dx, y){
 ################################################################################
 
 ## Read in Grab sample data
-GRABS<-read.csv(file="Data/Reservoir_Grab_2020-09-09.csv",header=TRUE,stringsAsFactors=FALSE)
+GRABS<-read.csv(file="Data/Reservoir_Grab_2022-05-06.csv",header=TRUE,stringsAsFactors=FALSE)
 GRABS$DateTime<-as.POSIXct(strptime(paste(GRABS$Date,GRABS$Time),format="%m/%d/%y %H:%M",tz="America/New_York"))
 attributes(GRABS$DateTime)$tzone<-"EST"
 GRABS$Date<-as.POSIXct(strptime(GRABS$Date,format="%m/%d/%y"))
@@ -168,7 +168,6 @@ rm(ID_Q_Daily,SMD_Q_Daily,PD_Q_Daily,OYS_Q_Daily,LMP_Q_Daily)
 
 ## Remove site-specific discharge data
 rm(SMD_Q,ID_Q,PD_Q,LMPD_Q,MCLN_Q,LH_Q,BRDS_Q,OMPD_Q)
-
 
 
 
