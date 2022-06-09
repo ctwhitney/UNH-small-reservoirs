@@ -1,0 +1,47 @@
+StreamStats Output Report
+
+State/Region ID,MA
+Workspace ID,MA20201109180636382000
+Latitude,42.67759
+Longitude,-70.83770
+Time,11/9/2020, 1:06:54 PM
+
+Basin Characteristics
+"Parameter Code","Parameter Description","Value","Unit"
+"ACRSDFT","Area underlain by stratified drift","74.6","square miles"
+"BSLDEM10M","Mean basin slope computed from 10 m DEM","5.066","percent"
+"BSLDEM250","Mean basin slope computed from 1:250K DEM","1.549","percent"
+"CAT1ROADS","Total cat 1 roads length in miles (TNM transportation)","40","miles"
+"CAT2ROADS","Total cat 2 roads length in miles (TNM transportation)","16.5","miles"
+"CAT3ROADS","Total cat 3 roads length in miles (TNM transportation)","90.6","miles"
+"CAT4ROADS","Total cat 4 roads length in miles (TNM transportation)","858","miles"
+"CENTROIDX","Basin centroid horizontal (x) location in state plane coordinates","240028.2","meters"
+"CENTROIDY","Basin centroid vertical (y) location in state plane units","929158.6","meters"
+"CROSCOUNT1","Count of category 1 road crossings","44","dimensionless"
+"CROSCOUNT2","Count of category 2 road crossings","17","dimensionless"
+"CROSCOUNT3","Count of category 3 road crossings","82","dimensionless"
+"CROSCOUNT4","Count of category 4 road crossings","424","dimensionless"
+"CRSDFT","Percentage of area of coarse-grained stratified drift","46.64","percent"
+"CSL10_85","Change in elevation divided by length between points 10 and 85 percent of distance along main channel to basin divide - main channel method not known","1.89","feet per mi"
+"DRFTPERSTR","Area of stratified drift per unit of stream length","0.23","square mile per mile"
+"DRNAREA","Area that drains to a point on a stream","150","square miles"
+"ELEV","Mean Basin Elevation","99","feet"
+"FOREST","Percentage of area covered by forest","49.49","percent"
+"LAKEAREA","Percentage of Lakes and Ponds","2.5","percent"
+"LC06STOR","Percentage of water bodies and wetlands determined from the NLCD 2006","21.33","percent"
+"LC11DEV","Percentage of developed (urban) land from NLCD 2011 classes 21-24","35.3","percent"
+"LC11IMP","Average percentage of impervious area determined from NLCD 2011 impervious dataset","12.7","percent"
+"LFPLENGTH","Length of longest flow path","41.7","miles"
+"MAREGION","Region of Massachusetts 0 for Eastern 1 for Western","0","dimensionless"
+"MAXTEMPC","Mean annual maximum air temperature over basin area, in degrees Centigrade","14.9","feet per mi"
+"OUTLETX","Basin outlet horizontal (x) location in state plane coordinates","254285","feet"
+"OUTLETY","Basin outlet vertical (y) location in state plane coordinates","936545","feet"
+"PCTSNDGRV","Percentage of land surface underlain by sand and gravel deposits","46.64","percent"
+"PRECPRIS00","Basin average mean annual precipitation for 1971 to 2000 from PRISM","47.2","inches"
+"STRMTOT","total length of all mapped streams (1:24,000-scale) in the basin","323","miles"
+"WETLAND","Percentage of Wetlands","19.66","percent"
+USGS Data Disclaimer: Unless otherwise stated, all data, metadata and related materials are considered to satisfy the quality standards relative to the purpose for which the data were collected. Although these data and associated metadata have been reviewed for accuracy and completeness and approved for release by the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of the data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty.
+USGS Software Disclaimer: This software has been approved for release by the U.S. Geological Survey (USGS). Although the software has been subjected to rigorous review, the USGS reserves the right to update the software as needed pursuant to further analysis and review. No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. Furthermore, the software is released on condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from its authorized or unauthorized use.
+USGS Product Names Disclaimer: Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.
+
+Application Version: 4.4.0

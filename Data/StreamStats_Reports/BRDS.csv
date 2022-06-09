@@ -1,0 +1,39 @@
+StreamStats Output Report
+
+State/Region ID,NH
+Workspace ID,NH20201110145751428000
+Latitude,43.13541
+Longitude,-70.91430
+Time,11/10/2020, 9:58:07 AM
+
+Basin Characteristics
+"Parameter Code","Parameter Description","Value","Unit"
+"APRAVPRE","Mean April Precipitation","4.143","inches"
+"BSLDEM30M","Mean basin slope computed from 30 m DEM","4.033","percent"
+"CENTROIDX","Basin centroid horizontal (x) location in state plane coordinates","1181049.6","meters"
+"CENTROIDY","Basin centroid vertical (y) location in state plane units","237479.1","meters"
+"CONIF","Percentaqe of land surface covered by coniferous forest","24.4048","percent"
+"CSL10_85","Change in elevation divided by length between points 10 and 85 percent of distance along main channel to basin divide - main channel method not known","50.6","feet per mi"
+"DRNAREA","Area that drains to a point on a stream","2.57","square miles"
+"ELEVMAX","Maximum basin elevation","328.216","feet"
+"LC11DEV","Percentage of developed (urban) land from NLCD 2011 classes 21-24","48.8","percent"
+"LC11IMP","Average percentage of impervious area determined from NLCD 2011 impervious dataset","12","percent"
+"MINTEMP_W","Mean winter minimum air temperature over basin surface area","16.849","degrees F"
+"MIXFOR","Percentage of land area covered by mixed deciduous and coniferous forest","14.7252","percent"
+"OUTLETX","Basin outlet horizontal (x) location in state plane coordinates","1185075","feet"
+"OUTLETY","Basin outlet vertical (y) location in state plane coordinates","232485","feet"
+"PREBC0103","Mean annual precipitation of basin centroid for January 1 to March 15 winter period","7.64","inches"
+"PREBC_1112","Mean annual precipitation of basin centroid for November 1 to December 31 period","8.86","inches"
+"PRECIPCENT","Mean Annual Precip at Basin Centroid","42.7","inches"
+"PRECIPOUT","Mean annual precip at the stream outlet (based on annual PRISM precip data in inches from 1971-2000)","42.9","inches"
+"PREG_03_05","Mean precipitation at gaging station location for March 16 to May 31 spring period","9.2","inches"
+"PREG_06_10","Mean precipitation at gaging station location for June to October summer period","16.9","inches"
+"SNOFALL","Mean Annual Snowfall","57.847","inches"
+"TEMP","Mean Annual Temperature","46.94","degrees F"
+"TEMP_06_10","Basinwide average temperature for June to October summer period","62.634","degrees F"
+"WETLAND","Percentage of Wetlands","2.293","percent"
+USGS Data Disclaimer: Unless otherwise stated, all data, metadata and related materials are considered to satisfy the quality standards relative to the purpose for which the data were collected. Although these data and associated metadata have been reviewed for accuracy and completeness and approved for release by the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of the data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty.
+USGS Software Disclaimer: This software has been approved for release by the U.S. Geological Survey (USGS). Although the software has been subjected to rigorous review, the USGS reserves the right to update the software as needed pursuant to further analysis and review. No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. Furthermore, the software is released on condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from its authorized or unauthorized use.
+USGS Product Names Disclaimer: Any use of trade, firm, or product names is for descriptive purposes only and does not imply endorsement by the U.S. Government.
+
+Application Version: 4.4.0
