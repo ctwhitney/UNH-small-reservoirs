@@ -13,7 +13,7 @@ rm(list=ls())
 Sys.Date<-as.character(Sys.Date())
 
 library(gridExtra)
-library(reshape2)
+#library(reshape2)
 #library(ggpubr)
 library(tidyverse)
 
@@ -83,17 +83,21 @@ GRABS$DOCtoTDN<-GRABS$DOC.mgL/GRABS$DON.mgL
 LitRemoval<-data.frame(
   Hl=seq(1.1,10000,length.out = 100)
 )
-LitRemoval$Removal_Seit<-88*LitRemoval$Hl^-0.368
+LitRemoval$Removal_Seit<-0.88453*LitRemoval$Hl^-0.3677
 LitRemoval$Removal_Seit<-LitRemoval$Removal_Seit+rnorm(length(LitRemoval$Removal_Seit),sd=0.01)
 
-LitRemoval$Removal_David<-243*LitRemoval$Hl^-0.5632
+LitRemoval$Removal_David<-2.43*LitRemoval$Hl^-0.5632
 LitRemoval$Removal_David<-LitRemoval$Removal_David+rnorm(length(LitRemoval$Removal_David),sd=0.01)
 
-LitRemoval<-melt(LitRemoval,id.vars=c("Hl"))
-LitRemoval$Eq<-NA
-LitRemoval[LitRemoval$variable=="Removal_Seit",]$Eq<-"Seitzinger et al."
-LitRemoval[LitRemoval$variable=="Removal_David",]$Eq<-"David et al."
+LitRemoval <- LitRemoval %>% pivot_longer(!Hl)
 
+#LitRemoval<-reshape2::melt(LitRemoval,id.vars=c("Hl"))
+LitRemoval$Eq<-NA
+LitRemoval[LitRemoval$name=="Removal_Seit",]$Eq<-"Seitzinger et al."
+LitRemoval[LitRemoval$name=="Removal_David",]$Eq<-"David et al."
+
+Seit <- nls(value~a*Hl^b,LitRemoval[LitRemoval$name == "Removal_Seit",], start=list(a=100,b=-1))
+David <- nls(value~a*Hl^b,LitRemoval[LitRemoval$name == "Removal_David",], start=list(a=100,b=-1))
 
 #####
 ################ Read in discharge data from USGS website ################
@@ -822,10 +826,10 @@ grid.arrange(Fig3a,Fig3b,Fig3c)
 
 
 ## Figure 4 model fits
-## RDIN fit comparison (copied form above)
+## RDIN fit comparison (copied from above)
 RDINfitfpl<-nls(-RDIN*100~SSfpl(log10(HL.myr), A, B, xmid, scal),data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude") #,na.action = "na.exclude"
 RDINfitlog<-lm(-RDIN*100~log10(HL.myr),Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude")
-RDINfitpow<-nls(-RDIN*100~a*log10(HL.myr)^b,Removal[Removal$RFlag2==0 & Removal$RDIN > -2 & Removal$HL.myr > 0.5,],start=list(a=1,b=-1),na.action = "na.exclude")
+RDINfitpow<-nls(RDIN~a*HL.myr^b,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],start=list(a=1,b=-1),na.action = "na.exclude") # & Removal$HL.myr > 0.5
 
 #{Used this to try to use with as.lm.nls function
 ## This regression omits the negative and '*100' on RDIN
@@ -868,7 +872,10 @@ RMSE = function(obs, fit){
   sqrt(mean((obs - fit)^2, na.rm = TRUE))
 }
 
-RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDFINfintfpl))
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, predict(Seit,newdata=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$HL.myr))
+
+
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitfpl))
 
 RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2 & Removal$HL.myr > 0.5,]$RDIN,fitted(RDINfitpow))
 
@@ -884,11 +891,42 @@ tmp$v2 <- fitted(RDINfitfpl)
 
 tmp$v2 <- unlist(RDINfitfpl$m$fitted())
 
+## Comparew model fits
+## Trying again because using negative and * 100 and log10(HL.myr) was not producing RDIN similar to RDIN
+
+RDINfitfpl<-nls(RDIN~SSfpl(log10(HL.myr), A, B, xmid, scal),data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude") #,na.action = "na.exclude"
+RDINfitlog<-lm(RDIN~HL.myr,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude")
+RDINfitpow<-nls(RDIN~a*HL.myr^b,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],start=list(a=1,b=-1),na.action = "na.exclude") # & Removal$HL.myr > 0.5
 
 
+Removal$RDINfpl <- predict(RDINfitfpl, newdata=data.frame(HL.myr = Removal$HL.myr))
+Removal$RDINpow <- predict(RDINfitpow, newdata=data.frame(HL.myr = Removal$HL.myr))
+Removal$RDINlog <- predict(RDINfitlog, newdata=data.frame(HL.myr = Removal$HL.myr))
+
+Removal$RDINSeit2 <- 0.88453*Removal$HL.myr^-0.3677
+Removal$RDINSeit2 <- Removal$RDINSeit2+rnorm(length(Removal$RDINSeit2),sd=0.01)
 
 
+Removal$RDINSeit <- predict(Seit, newdata=data.frame(Hl = Removal$HL.myr))
+Removal$RDINSeit <- Removal$RDINSeit+rnorm(length(Removal$RDINSeit),sd=0.01)
+Removal$RDINDavid <- predict(David, newdata=data.frame(Hl = Removal$HL.myr))
+Removal$RDINDavid <- Removal$RDINDavid+rnorm(length(Removal$RDINDavid),sd=0.01)
 
+
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitfpl))
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitpow))
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitlog))
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, 
+     predict(Seit2, newdata=data.frame(Hl = Removal$HL.myr))) #Seitzinger model fit to my HL
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, 
+     predict(David, newdata=data.frame(Hl = Removal$HL.myr))) #David model fit to my HL
+
+Seit4 <- nls(RDINSeit2~a*HL.myr^b, Removal[Removal$RFlag2 == 0 & Removal$RDIN > -2,], start=list(a=0.88, b=-0.3),na.action="na.exclude")
+David2 <- nls(RDINDavid~a*HL.myr^b, Removal[Removal$RFlag2 == 0 & Removal$RDIN > -2,], start=list(a=2.43, b=-0.568))
+
+
+nls(RDIN~B + ((A-B)/(1 + exp((HL.myr-xmid)/scal))), data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],
+    start=list(A = 6.3, B = 0.75, xmid = 62.9, scal = 2),nls.control(maxiter=15000, minFactor = 6e-10))
 
 
 
