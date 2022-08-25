@@ -84,7 +84,11 @@ LitRemoval<-data.frame(
   Hl=seq(1.1,10000,length.out = 100)
 )
 LitRemoval$Removal_Seit<-0.88453*LitRemoval$Hl^-0.3677
+LitRemoval$Removal_Seit100 <- -88.453*LitRemoval$Hl^-0.3677
 LitRemoval$Removal_Seit<-LitRemoval$Removal_Seit+rnorm(length(LitRemoval$Removal_Seit),sd=0.01)
+LitRemoval$Removal_Seit100<-LitRemoval$Removal_Seit100+rnorm(length(LitRemoval$Removal_Seit100),sd=0.01)
+
+Seit <- nls(Removal_Seit100~a*Hl^b, LitRemoval, start=list(a=-88, b=-0.3))
 
 LitRemoval$Removal_David<-2.43*LitRemoval$Hl^-0.5632
 LitRemoval$Removal_David<-LitRemoval$Removal_David+rnorm(length(LitRemoval$Removal_David),sd=0.01)
@@ -623,31 +627,44 @@ ggsave(paste0("Plots/Fig_3_",Sys.Date(),".pdf"),plot=Fig3)
 
 Fig4a<-ggplot()+ 
   geom_point(data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],aes(x=HL.myr,y=-RDIN*100,shape=Site,color=Temp.C.OUT),size=1.5,stroke=0.75,show.legend=TRUE)+ #,stroke=1
-  #Logarithmic fit
-  #geom_smooth(data=Removal[Removal$RFlag==0,],aes(x=HL.myr,y=-RDIN*100,linetype="Logarithmic Fit"),method='lm',formula="y~log10(x)",se=FALSE,color="black",size=0.75)+
   #Four-Parameter Logistic
   geom_smooth(data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],aes(x=HL.myr,y=-RDIN*100,linetype="Logistic Fit - This Study"),method="nls",formula=y~SSfpl(x, A, B, xmid, scal),
               method.args=list(start=list(A=-84,B=25.69,xmid=1.90,scal=0.44)),se=FALSE,color="black",size=0.75)+
+  # Power fit
+  # This only works if the x-axis has a lower limit of 0.5 m yr
+  #geom_smooth(data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,], aes(x=HL.myr, y=-RDIN*100, linetype="Power Fit - This Study"),
+  #            method = 'nls', formula = 'y~a*x^b', method.args = list(start=list(a=-100, b=-1)), se=FALSE, color="black", size=0.75)+
+  # Power Fit from equation
+  # This works with the same x-axis as the FPL
+  stat_function(data=Removal[Removal$RFlag2 == 0 & Removal$RDIN > -2,], fun = function(HL.myr) -66.43064*HL.myr^-0.23992, #-66.43064*HL.myr^-0.23992
+                aes(linetype = "Power Fit - This Study"),size=0.75, color="black")+
+  #Logarithmic fit
+  #geom_smooth(data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],
+  #            aes(x=HL.myr,y=-RDIN*100,linetype="Logarithmic Fit - This Study"),method='lm',formula="y~log10(x)",se=FALSE,color="black",size=0.75)+
+  # Logarithmic Fit
+  stat_function(data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,], fun = function(HL.myr) -85.962+log10(HL.myr)*31.024,
+                aes(linetype = "Logarithmic Fit - This Study"), size=0.75, color="black")+
   # Mean annual RDIN for verification purposes
   #geom_point(data=MAChange,aes(x=HL.myr,y=-RDIN*100,shape=Site),color="red",size=2,stroke=1.5)+
   #Seitzinger et al. 2006 #0.5
   #NOT THIS ONE geom_smooth(data=LitRemoval,aes(x=Hl,y=(-Removal_Seit),linetype="Seitzinger et al. 2006"),method='nls',formula='y~a*x^b',method.args=list(start=list(a=88.453,b=-0.3677)),se=FALSE,fullrange=FALSE,color="red")+
   stat_function(data=data.frame(x=seq(0.5,10000,by=1)),fun= function(x) -88.453*x^-0.3677,aes(linetype="Seitzinger et al. 2006"),size=0.75,color="black",show.legend=FALSE)+
   #David et al. 2006
-  stat_function(data=data.frame(x=seq(0.5,10000,by=1)),fun= function(x) -243*x^-0.5632,aes(linetype="David et al. 2006"),size=0.75)+
+  #stat_function(data=data.frame(x=seq(0.5,10000,by=1)),fun= function(x) -243*x^-0.5632,aes(linetype="David et al. 2006"),size=0.75)+
   #annotate("text",x=0.07,y=85,label='bold("A")',parse=TRUE,size=4)+
   geom_hline(yintercept=c(0))+
   geom_hline(yintercept=c(-20,20),linetype="dashed")+
-  geom_vline(xintercept=290.953)+ #320
+  #geom_vline(xintercept=290.953)+ #320
   annotate("text",x=8500,y=24,label="+20%",size=2.2)+
   annotate("text",x=8500,y=-24,label="-20%",size=2.2)+
   scale_x_continuous(limits=c(0.06,10000),breaks=c(0,1,10,100,1000,10000),trans="log10")+ #limits=c(0.5,10000),
+  #scale_x_continuous(limits=c(0.5,10000),breaks=c(0,1,10,100,1000,10000),trans="log10")+ #limits=c(0.5,10000),
   scale_y_continuous(limits=c(-100,NA))+
   scale_shape_manual("",values=c("BRDS"=0,"ID"=1,"LH"=3,"LMPD"=4,"MCLN"=5,"OMPD"=6,"PD"=2,"SMD"=8),na.translate=FALSE)+
   # DOY scale_color_gradientn("",colors=c("darkblue","blue","green","yellowgreen","orangered","orangered2","orange","blue","darkblue"),values=c(0,0.25,0.5,0.75,1))+ #,values=c(0,0.2,0.4,0.6,0.8,1)
   scale_color_gradient2(name=expression(bold(Temp~(degree~C))),low="darkblue",mid="green",high="red",midpoint=16)+
   #scale_color_manual("",values=c("Winter"="darkblue","Spring"="green","Summer"="red","Autumn"="orange"),breaks=c("Winter","Spring","Summer","Autumn"))+
-  scale_linetype_manual("",values=c("Logistic Fit - This Study"="solid","Seitzinger et al. 2006"="dashed","David et al. 2006"="dotted"),breaks=c("Logistic Fit - This Study","Logarithmic Fit","Seitzinger et al. 2006", "David et al. 2006"))+
+  scale_linetype_manual("",values=c("Logistic Fit - This Study"="solid", "Power Fit - This Study" = "dotted", "Logarithmic Fit - This Study" = "dotdash", "Seitzinger et al. 2006"="dashed","David et al. 2006"="dotted"),breaks=c("Logistic Fit - This Study", "Power Fit - This Study" ,"Logarithmic Fit - This Study","Seitzinger et al. 2006"))+ #, "David et al. 2006"
   labs(x=expression(bold(HL~(m~yr^-1))),y=expression(bold(Delta~DIN~("%"))))+
   #facet_wrap(~Site,scales="free_y")+ #,scales="free"
   theme_bw()+
@@ -659,8 +676,8 @@ Fig4a<-ggplot()+
         legend.key=element_blank(), legend.key.width=unit(2,"lines"), plot.title=element_text(size=13),
         legend.text=element_text(face="bold",size=6),legend.position=c(0.2,0.45),legend.box="vertical",
         legend.margin=margin(-0.5,0,-0.5,0,unit="cm"))+ #,legend.box="vertical"
-  guides(linetype=guide_legend(nrow=3,byrow=TRUE,override.aes=list(shape=NA),keyheight=0.5),color=FALSE,
-         shape=FALSE) #,linetype=guide_legend(override.aes=list(size=2))
+  guides(linetype=guide_legend(nrow=4,byrow=TRUE,override.aes=list(shape=NA),keyheight=0.5),color="none",
+         shape="none") #,linetype=guide_legend(override.                                                                                                                                           es=list(size=2))
 # guides(linetype=FALSE,color=guide_colorbar(title.position="top",title.hjust=0.5),
 #        shape=guide_legend(label.theme=element_text(size=8,angle=0),override.aes=list(color="black",stroke=1,size=1))) #,linetype=guide_legend(override.aes=list(size=2))
 # guides(linetype=guide_legend(nrow=2,byrow=TRUE,override.aes=list(shape=NA,color=c("black","black","black"))), color=FALSE,
@@ -671,7 +688,7 @@ Fig4a
 
 
 
-ggsave(file=paste0("Plots/Fig_4a_",Sys.Date(),".pdf"),plot=Fig4a) #,width=10,height=6 more recently: ,width=7.29,height=6
+ggsave(file=paste0("Plots/Fig_4a_",Sys.Date(),".png"),plot=Fig4a) #,width=10,height=6 more recently: ,width=7.29,height=6
 ggsave(file=paste0("~/Desktop/Dissertation/Manuscripts/CH1_Small_Reservoirs/Figures/Fig3a_",
                    Sys.Date(),".pdf"),plot=Fig3a)
 
@@ -699,7 +716,7 @@ Fig4b<-ggplot()+
   #annotate("text",x=0.07,y=100,label='bold("B")',parse=TRUE,size=4)+
   geom_hline(yintercept=c(0))+
   geom_hline(yintercept=c(-20,20),linetype="dashed")+
-  geom_vline(xintercept = 3165.018)+
+  #geom_vline(xintercept = 3165.018)+
   annotate("text",x=8500,y=24,label="+20%",size=2.2)+
   annotate("text",x=8500,y=-24,label="-20%",size=2.2)+
   #scale_y_continuous(limits=c(-100,100))+
@@ -742,7 +759,7 @@ Fig4c<-ggplot()+
   #annotate("text",x=0.07,y=85,label='bold("C")',parse=TRUE,size=4)+ #85
   geom_hline(yintercept=0)+
   geom_hline(yintercept=c(-20,20),linetype="dashed")+
-  geom_vline(xintercept=305.0057)+
+  #geom_vline(xintercept=305.0057)+
   annotate("text",x=8500,y=24,label="+20%",size=2.2)+
   annotate("text",x=8500,y=-24,label="-20%",size=2.2)+
   #scale_y_continuous(limits=c(-100,100))+
@@ -797,7 +814,7 @@ summary(nls(-RTDN*100~a*HL.myr^b,Removal[Removal$RFlag==0,],start=list(a=100,b=-
 #                    Sys.Date(),".pdf"),plot=Fig3comb)
 
 Fig4comb2<-cowplot::plot_grid(cowplot::plot_grid(
-  Fig4a+theme(axis.title.x=element_blank(),legend.position=c(0.33,0.80)),
+  Fig4a+theme(axis.title.x=element_blank(),legend.position=c(0.35,0.84)),
   Fig4b+theme(legend.position="none",axis.title.x=element_text(hjust=-0.4)), #,axis.title.x=element_blank() 
   ncol=2,
   align='h',
@@ -894,9 +911,13 @@ tmp$v2 <- unlist(RDINfitfpl$m$fitted())
 ## Comparew model fits
 ## Trying again because using negative and * 100 and log10(HL.myr) was not producing RDIN similar to RDIN
 
-RDINfitfpl<-nls(RDIN~SSfpl(log10(HL.myr), A, B, xmid, scal),data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude") #,na.action = "na.exclude"
-RDINfitlog<-lm(RDIN~HL.myr,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude")
-RDINfitpow<-nls(RDIN~a*HL.myr^b,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],start=list(a=1,b=-1),na.action = "na.exclude") # & Removal$HL.myr > 0.5
+RDINfitfpl<-nls(-RDIN*100~SSfpl(log10(HL.myr), A, B, xmid, scal),data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude") #,na.action = "na.exclude"
+RDINfitlog<-lm(-RDIN*100~log10(HL.myr),Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.exclude")
+RDINfitpow<-nls(-RDIN*100~a*HL.myr^b,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],start=list(a=100,b=-1),na.action = "na.exclude") # & Removal$HL.myr > 0.5
+
+RDINfitfpl2<-nls(RDIN2~SSfpl(log10(HL.myr), A, B, xmid, scal),data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.omit")
+RDINfitlog2<-lm(RDIN~log10(HL.myr),Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],na.action = "na.omit")
+RDINfitpow2<-nls(RDIN~a*HL.myr^b,Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],start=list(a=1,b=-1),na.action = "na.omit") # & Removal$HL.myr > 0.5
 
 
 Removal$RDINfpl <- predict(RDINfitfpl, newdata=data.frame(HL.myr = Removal$HL.myr))
@@ -913,11 +934,11 @@ Removal$RDINDavid <- predict(David, newdata=data.frame(Hl = Removal$HL.myr))
 Removal$RDINDavid <- Removal$RDINDavid+rnorm(length(Removal$RDINDavid),sd=0.01)
 
 
-RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitfpl))
+RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitfpl2))
 RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitpow))
 RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, fitted(RDINfitlog))
-RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, 
-     predict(Seit2, newdata=data.frame(Hl = Removal$HL.myr))) #Seitzinger model fit to my HL
+RMSE(-Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN*100, 
+     predict(Seit, newdata=data.frame(Hl = Removal$HL.myr))) #Seitzinger model fit to my HL
 RMSE(Removal[Removal$RFlag2==0 & Removal$RDIN > -2,]$RDIN, 
      predict(David, newdata=data.frame(Hl = Removal$HL.myr))) #David model fit to my HL
 
@@ -928,7 +949,11 @@ David2 <- nls(RDINDavid~a*HL.myr^b, Removal[Removal$RFlag2 == 0 & Removal$RDIN >
 nls(RDIN~B + ((A-B)/(1 + exp((HL.myr-xmid)/scal))), data=Removal[Removal$RFlag2==0 & Removal$RDIN > -2,],
     start=list(A = 6.3, B = 0.75, xmid = 62.9, scal = 2),nls.control(maxiter=15000, minFactor = 6e-10))
 
+AIC(RDINfitfpl,RDINfitpow,RDINfitlog)
+AIC(RDINfitfpl2,RDINfitpow2,RDINfitlog2)
 
+BIC(RDINfitfpl,RDINfitpow,RDINfitlog)
+BIC(RDINfitfpl2,RDINfitpow2,RDINfitlog2)
 
 
 
